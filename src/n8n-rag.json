@@ -1,0 +1,445 @@
+{
+  "name": "n8n-rag",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "bucketName": "n8nbacen",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "863d3b4a-098a-41ea-af4a-9864cbfc9c9f",
+      "name": "Get many files",
+      "credentials": {
+        "s3": {
+          "id": "BczNpjeldVQ4u44T",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "bucketName": "n8nbacen",
+        "fileKey": "={{ $json.Key }}"
+      },
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "a6e4ebf6-c63d-4cf3-94e2-8c307b3d0766",
+      "name": "Download a file",
+      "credentials": {
+        "s3": {
+          "id": "BczNpjeldVQ4u44T",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        896,
+        0
+      ],
+      "id": "63853ef8-8b52-44f1-9e3d-1f5d7d52e5d8",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        0
+      ],
+      "id": "fceed09c-22ce-490c-8a80-34b6129b410c",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "dSdkEURUDQLn1sfC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        224
+      ],
+      "id": "eecac3a4-1182-46d0-96ad-b4804b6f7e89",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "mowKUu2I4AiUvTeB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        176
+      ],
+      "id": "9f926e6d-c627-476a-a045-7b08a88b3cba",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        336
+      ],
+      "id": "d3de0d7f-ff13-4065-bfac-fe49f54a5395",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "content": "## Load Data",
+        "height": 304,
+        "width": 864,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        176,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "d7af1ac0-1412-4b34-a240-4ef00901f9f7",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "486496ba-71ba-4043-8d5d-1afa9206aa95",
+      "name": "Execute workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Create embeddings",
+        "height": 544,
+        "width": 464,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "d36cc4b7-d31d-43f8-b7e6-1fec5e254562",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Use o Postgres PGVector Store1 para responder as perguntas do usuario sobre circulares do banco central do brasil (bacen). Essa é a sua base de conhecimento."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        352
+      ],
+      "id": "543e9962-37e5-42de-b516-001a621d7e75",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        560
+      ],
+      "id": "5de8f20c-b3d7-4703-aad9-9434674ec2b8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mowKUu2I4AiUvTeB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use essa tool para recuperar informacoes sobre perguntas de circulares do banco central do brasil do usuario.",
+        "topK": 20,
+        "useReranker": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        560
+      ],
+      "id": "877b87ef-2e5c-4d61-9b2d-3b847e34f1a1",
+      "name": "Postgres PGVector Store1",
+      "credentials": {
+        "postgres": {
+          "id": "dSdkEURUDQLn1sfC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        720
+      ],
+      "id": "4f9eabb5-25ab-4ec9-98a1-58581e2fadb5",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "mowKUu2I4AiUvTeB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Retrieval",
+        "height": 560,
+        "width": 864
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "3769328a-1d5d-41a2-adab-d2bcfdd2ce5c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        352
+      ],
+      "id": "c7f4ab23-f8ad-4217-81ef-c689a59176f8",
+      "name": "chat",
+      "webhookId": "c24f9dfd-8faf-44ac-b51f-04e16098dd4b"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+      "typeVersion": 1,
+      "position": [
+        800,
+        720
+      ],
+      "id": "27bfe322-3fd9-48a3-be3d-7dae06b7d475",
+      "name": "Reranker Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "nANkQbIRVlmEzqB3",
+          "name": "CohereApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get many files": {
+      "main": [
+        [
+          {
+            "node": "Download a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Get many files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chat": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reranker Cohere": {
+      "ai_reranker": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_reranker",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9fed615c-7e26-43e8-a33f-0270560c5ce3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6d62a0ad5b6bfec16a1f7bbbe6b33f90de0b0bdb3fbf2bcebda856bee39fc9b"
+  },
+  "id": "wXeHTNtzCtIkIpq0",
+  "tags": []
+}
